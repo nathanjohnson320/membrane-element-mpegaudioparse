@@ -66,7 +66,7 @@ defmodule Membrane.Element.MPEGAudioParse.Parser do
 
       {:error, reason} ->
         raise """
-        Error while parsing frame. You may consider using "skip_to_frame" option to prevent this error.
+        Error while parsing frame. You may consider using "skip_until_frame" option to prevent this error.
         Reason: #{inspect(reason, pretty: true)}
         """
     end
@@ -93,10 +93,7 @@ defmodule Membrane.Element.MPEGAudioParse.Parser do
       frame_buffer = {:buffer, {:output, %Membrane.Buffer{payload: frame_payload}}}
       do_parse(rest, [frame_buffer | acc], caps, frame_size, skip_flag)
     else
-      {:error, :unsupported} ->
-        {:error, {:unsupported_frame, payload}}
-
-      {:error, :invalid} ->
+      {:error, _} ->
         if skip_flag do
           payload
           |> force_skip_to_frame()
